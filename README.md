@@ -1,5 +1,5 @@
 # Plotter
-Matpllotlib based framework to create plots
+Matplotlib based framework to create plots
 
 ## How it works
 

@@ -32,11 +32,11 @@ def plotter(arg_list, attribute_list,**kwargs):
     def get_axes(figure_axes=fig.axes,attribute_list=attribute_list,arg_list=arg_list,pipeline=1):
     
         for i, axis in tqdm(enumerate(figure_axes),total=len(figure_axes)):
-            
+            row_no = i//ncols+1
+            col_no = i%ncols+1
+            axis.plots_ = []
             if pipeline:
                 if kwargs.get('second_plot',0):
-                    row_no = i//3+1
-                    col_no = i%3+1
                     ax2=fig.add_subplot(nrows,ncols,i+1, label=f"second_{row_no}{col_no}", frame_on=False)
                     ax2.xaxis.tick_top()
                     ax2.yaxis.tick_right()
@@ -46,6 +46,7 @@ def plotter(arg_list, attribute_list,**kwargs):
                 else:
                     axis.spines["top"].set_visible(False)
                     axis.spines["right"].set_visible(False)
+                    axis.set_label(f"{row_no}{col_no}")
 
                 if kwargs.get('centered_y_axis'):
                     ax.spines['left'].set_position('center')
@@ -57,10 +58,12 @@ def plotter(arg_list, attribute_list,**kwargs):
             for attribute,arg in zip(attribute_list, arg_list[i]):
 
                 if attribute[:4]=='2nd_':
+                    assert kwargs.get('second_plot',0), "Please pass in keyword argument 'second_plot=1' to enable a second graph on the same subplot."
+                    axis.second_plot_ = ax2
                     ax_helper(ax2,attribute[4:],arg,lines)
                 elif attribute=='inset_axes':
                     axins = axis.inset_axes(arg['bounds'])
-                    get_axes([axins],arg['attributes'],arg['args'],arg.get('pipeline',1))
+                    get_axes([axins],arg['attributes'],arg['args'],arg.get('pipeline',1),row_no,col_no)
                 else:
                     ax_helper(axis,attribute,arg,lines)
 
@@ -73,8 +76,9 @@ def plotter(arg_list, attribute_list,**kwargs):
     
     save_path = kwargs.get('save_path')
     if save_path and len(save_path)>3:
-        save_filename = '_'.join([i[i.index(' ')+1:] for i in fig_title.split('\n')])+'.jpg'
         if save_path[-4]!='.':
+            assert len(fig_title), "You are trying to save your plot but you have neither provided a save path nor a title for you plot."
+            save_filename = '_'.join([i[i.index(' ')+1:] for i in fig_title.split('\n')])+'.jpg'
             if save_path[-1]!='/':
                 save_path += '/' + save_filename
             else:
@@ -105,7 +109,8 @@ def make_labels(ax,x_or_y,prop):
                 raise NotImplementedError
     else:
         if prop == 'positive':
-            getattr(ax, f'set_{x_or_y}ticklabels')([*map(abs,labels)])
+            # getattr(ax, f'set_{x_or_y}ticklabels')([*map(abs,labels)])
+            getattr(ax, f'set_{x_or_y}ticks')(ticks=labels,labels=[*map(abs,np.round(labels,5))])
         else:
             raise NotImplementedError
         
@@ -139,29 +144,46 @@ def ax_helper(ax,attribute,arg,lines=[]):
     elif attribute=='make_twinx':
         assert isinstance(arg,dict), "Please make sure your list contains only a dictionary with attributes as keys and arguments as values, which must be lists or dictionaries."
         twin_ax = ax.twinx()
+        ax.twin = twin_ax
+        twin_ax.set_label("twinx_"+ax.get_label())
         for attr in arg.keys():
             ax_helper(twin_ax,attr,arg[attr])
         twin_ax.spines["top"].set_visible(False)
+        twin_ax.spines["bottom"].set_visible(False)
+        twin_ax.spines["left"].set_visible(False)
         
     elif attribute=='make_twiny':
+        assert isinstance(arg,dict), "Please make sure your list contains only a dictionary with attributes as keys and arguments as values, which must be lists or dictionaries."
         twin_ax = ax.twiny()
+        ax.twin = twin_ax
+        twin_ax.set_label("twiny_"+ax.get_label())
+        for attr in arg.keys():
+            ax_helper(twin_ax,attr,arg[attr])
+        twin_ax.spines["right"].set_visible(False)
+        twin_ax.spines["bottom"].set_visible(False)
+        twin_ax.spines["left"].set_visible(False)
 
-        twin_ax.set_xlabel(**arg['xlabel'])
-        twin_ax.set_xlim(ax.get_xlim())
-        twin_ax.set_xticks(arg['tick_locations'])
-        if list(arg.keys()).count('tick_function'):
-            twin_ax.set_xticklabels(arg['tick_function'](arg['tick_locations']))
-        if list(arg.keys()).count('tick_params'):
-            twin_ax.tick_params(**arg['tick_params'])
+        # twin_ax.set_xlabel(**arg['xlabel'])
+        # twin_ax.set_xlim(ax.get_xlim())
+        # twin_ax.set_xticks(arg['tick_locations'])
+        # if list(arg.keys()).count('tick_function'):
+        #     twin_ax.set_xticklabels(arg['tick_function'](arg['tick_locations']))
+        # if list(arg.keys()).count('tick_params'):
+        #     twin_ax.tick_params(**arg['tick_params'])
 
     elif attribute=='ticks':
         for i in arg.keys():
             make_labels(ax,i,arg[i])
     
     elif attribute=='color_ax':
-        if ax.get_label().count('second_'):
+        ax_label = ax.get_label()
+        if ax_label.count('second_'):
             ax.mother.spines['top'].set_color(arg['color'])
             ax.mother.spines['right'].set_color(arg['color'])
+        elif ax_label.count('twinx_'):
+            ax.spines['right'].set_color(arg['color'])
+        elif ax_label.count('twiny_'):
+            ax.spines['top'].set_color(arg['color'])
         else:
             ax.spines['bottom'].set_color(arg['color'])
             ax.spines['left'].set_color(arg['color'])
@@ -177,6 +199,32 @@ def ax_helper(ax,attribute,arg,lines=[]):
         formatter = arg[0]
         x_or_y = attribute.split('time_format')[-1]
         getattr(ax,f"{x_or_y}axis").set_major_formatter(mdates.DateFormatter(formatter))
+
+    elif attribute == "legend":
+        handles , labels = ax.get_legend_handles_labels()
+        if hasattr(ax,'twin'):
+            if ax.twin.get_legend() is None:
+                twin_handles , twin_labels = ax.twin.get_legend_handles_labels()
+                handles+=twin_handles
+                labels+=twin_labels
+        if hasattr(ax,'second_plot_'):
+            if ax.second_plot_.get_legend() is None:
+                second_plot_handles , second_plot_labels = ax.second_plot_.get_legend_handles_labels()
+                handles+=second_plot_handles
+                labels+=second_plot_labels
+        if sum([isinstance(i,dict) for i in arg]):
+            if list(arg[-1].keys()).count('line_order'):
+                line_order = arg[-1].pop('line_order')
+                line_order = [*map(lambda x: tuple([*map(lambda i: lines[i],x)]),line_order)]
+                getattr(ax, attribute)(handles = line_order,**arg[-1])
+            else:
+                keyword_args_ = {i:k for i,k in arg[-1].items()}
+                keyword_args_.update(dict(handles=handles,labels=labels))
+                ax.legend(*arg[:-1],**keyword_args_)
+        else:
+            keyword_args_ = dict(handles=handles,labels=labels)
+            ax.legend(*arg,**keyword_args_)
+
 
     elif sum([isinstance(i,dict) for i in arg]):
         if attribute =='plot' and list(arg[-1].keys()).count('fillstyle'):

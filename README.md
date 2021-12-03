@@ -197,7 +197,7 @@ plotter(args,methods,fig_title='Intermediate example',ncols=1,show=1,suptitle_y=
 ```
 ![image info](./example_plots/intermediate_example_lineplot&hist_twiny1.png)
 
-And if you do not want seperate legends, just remove it from the dictionary:
+And if you do not want separate legends, just remove it from the dictionary:
 
 ```
 

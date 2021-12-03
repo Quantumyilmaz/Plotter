@@ -118,7 +118,7 @@ plotter(args,methods,fig_title='Intermediate example',show=1,save_path='./exampl
 
 ![image info](./example_plots/intermediate_example_lineplot+hist.png)
 
-If we wanted a histogram and a line plot in each histogram:
+If we wanted a histogram and a line plot in each subplot:
 
 ```
 hist_data2 = np.random.randn(1000)

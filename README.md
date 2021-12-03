@@ -65,7 +65,7 @@ plotter(args,methods,ncols=1,fig_title='Base example',show=1,save_path='./exampl
 ![image info](./example_plots/base_example_keyword_args.png)
 
 ### Intermediate examples
-```plotter``` does not really offer utility in simple cases. So we will gradually move on to more complicated cases. Let's say this time want to have 2 subplots
+```plotter``` does not really offer utility in simple cases. So we will gradually move on to more complicated ones. Let's say this time we want to have two subplots:
 
 #### Two Line plots
 

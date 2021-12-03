@@ -48,7 +48,7 @@ plotter(args,methods,ncols=1,fig_title='Base example',show=1,save_path='./exampl
 
 ![image info](./example_plots/base_example.png)
 
-- To adjust things like color and linewiths, we pass in a dictionary. These are keyword arguments that the corresponding method (.plot() in this case) accepts:
+- To adjust things like color and linewidths, we pass in a dictionary. These are keyword arguments that the corresponding method (.plot() in this case) accepts:
 
 ```
 keyword_args = dict(color='red',linewidth=5)

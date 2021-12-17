@@ -44,14 +44,19 @@ def plotter(arg_list, attribute_list,**kwargs):
                     ax2.yaxis.set_label_position('right')
                     ax2.mother = axis
                 else:
-                    axis.spines["top"].set_visible(False)
-                    axis.spines["right"].set_visible(False)
+                    if not kwargs.get('keep_spines'):
+                        axis.spines["top"].set_visible(False)
+                        axis.spines["right"].set_visible(False)
                     axis.set_label(f"{row_no}{col_no}")
-
+                    
+                axes_linewidth = kwargs.get('axes_linewidth')
+                if axes_linewidth:
+                    for spine in ['top','bottom','left','right']:
+                        axis.spines[spine].set_linewidth(axes_linewidth)
                 if kwargs.get('centered_y_axis'):
-                    ax.spines['left'].set_position('center')
+                    axis.spines['left'].set_position('center')
                 if kwargs.get('centered_x_axis'):
-                    ax.spines['bottom'].set_position('center')
+                    axis.spines['bottom'].set_position('center')
             
             lines = []
 
@@ -62,8 +67,12 @@ def plotter(arg_list, attribute_list,**kwargs):
                     axis.second_plot_ = ax2
                     ax_helper(ax2,attribute[4:],arg,lines)
                 elif attribute=='inset_axes':
-                    axins = axis.inset_axes(arg['bounds'])
-                    get_axes([axins],arg['attributes'],arg['args'],arg.get('pipeline',1),row_no,col_no)
+                    inset_bounds,inset_methods,inset_args = arg.pop('bounds'),arg.pop('methods'),arg.pop('args')
+                    inset_pipeline = 1 if not 'pipeline' in arg else arg.pop('pipeline')
+                    axis.inset_ = axis.inset_axes(inset_bounds)
+                    axis.inset_.outset_ = axis
+                    axis.inset_.set_label(f"{row_no}{col_no}")
+                    get_axes([axis.inset_],inset_methods,inset_args,pipeline=inset_pipeline)#,**arg)
                 else:
                     ax_helper(axis,attribute,arg,lines)
 
@@ -73,6 +82,8 @@ def plotter(arg_list, attribute_list,**kwargs):
     
     if kwargs.get('hspace',0):
         plt.subplots_adjust(hspace=kwargs.get('hspace'))
+    if kwargs.get('wspace',0):
+        plt.subplots_adjust(hspace=kwargs.get('wspace'))
     
     save_path = kwargs.get('save_path')
     if save_path and len(save_path)>3:
@@ -115,8 +126,21 @@ def make_labels(ax,x_or_y,prop):
             raise NotImplementedError
         
 def ax_helper(ax,attribute,arg,lines=[]):
-    if arg == None:
+    if arg is None:
         pass
+
+    elif attribute.startswith('indicate_inset'):
+        assert hasattr(ax,'inset_')
+        if sum([isinstance(i,dict) for i in arg]):
+            # print(ax.inset_,*arg[:-1],**arg[-1])
+            connector_lines = None if not 'connector_lines' in arg[-1] else arg[-1].pop('connector_lines')
+            ax.rectangle_patch_,ax.connector_lines_=getattr(ax, attribute)(*arg[:-1],**arg[-1],inset_ax=ax.inset_)
+            if connector_lines:
+                for select_,connector_line in zip(connector_lines,ax.connector_lines_):
+                    connector_line.set_visible(select_)
+        else:
+            ax.rectangle_patch_,ax.connector_lines_=getattr(ax, attribute)(*arg,inset_ax=ax.inset_)
+        
 
     elif attribute=='make_table':
         dictionary = arg[0]
@@ -185,8 +209,10 @@ def ax_helper(ax,attribute,arg,lines=[]):
         elif ax_label.count('twiny_'):
             ax.spines['top'].set_color(arg['color'])
         else:
-            ax.spines['bottom'].set_color(arg['color'])
-            ax.spines['left'].set_color(arg['color'])
+            for spine in ax.spines.values():
+                spine.set_color(arg['color'])
+            # ax.spines['bottom'].set_color(arg['color'])
+            # ax.spines['left'].set_color(arg['color'])
                                               
     elif attribute=='text':
         ax.text(*arg[0],**arg[1],transform=ax.transAxes)

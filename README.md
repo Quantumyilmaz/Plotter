@@ -439,3 +439,96 @@ fig = plotter(args,attrs,second_plot=1,fig_title=f'Distributions and Autocorrela
               ,dpi=300, ncols=3,xpad=10,ypad=25, hspace = 0.45 ,suptitle_y=0.95,suptitle_x=0.51,save_path='./example_plots/advanced_example_autcorr.png',show=1)
 ```
 ![image info](./example_plots/advanced_example_autcorr.png)
+
+## Other Features
+
+### Axes Related
+
+#### Thicker and centered axes
+
+Here we look at some axes related features that can be passed to ```plotter``` as keyword arguments:
+- ```axes_linewidth```: Set the linewith of axes. Default is ```1```.
+- ```keep_spines```: Set to ```True``` to keep the top and right sides of the figure's frame, which are removed by default.
+- ```centered_x_axis``` and ```centered_y_axis```: Set each to ```True``` to have centered x- and/or y-axes.
+
+```
+args =[ 
+          [
+          [range(4)],[dict(width=4,direction='inout',length=8)]
+          ]             
+        ]
+
+methods =['plot','tick_params']
+
+plotter(args,methods,ncols=1,fig_title='Base example',show=1,axes_linewidth=4,keep_spines=True,save_path='./example_plots/axes_stuff.png');
+
+plotter(args,methods,ncols=1,fig_title='Base example',show=1,axes_linewidth=4,centered_x_axis=True,centered_y_axis=True,save_path='./example_plots/axes_stuff.png');
+
+```
+
+
+
+![image info](./example_plots/axes_linewidth.png)
+![image info](./example_plots/axes_centered.png)
+
+#### Inset axes
+
+To create an inset plot, we use ```inset_axes``` method and pass in a dictionary with the following keys as argument:
+
+- ```bounds``` : Lower-left corner of inset Axes, and its width and height.
+- ```methods``` : Methods to be called for the inset Axes.
+- ```args``` : Arguments to be passed in to ```methods```.
+
+Other (keyword) arguments will be passed in as usual to [```inset_axes```](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.inset_axes.html).
+
+```
+vlines = [(3,6,7.5),0.,1.] # vline_x_positions, vline_y_min , vline_y_max
+hlines = [(0.5,1,0),(3,7,7),(6,8,8)] # hline_y_positions, hline_x_mins , hline_x_maxes
+inset_bounds = [.6,0.2,.2,.5] # x0,y0,xwidth,ywidth
+indicator_bounds = [2.5,-0.125,6,1.25] # x0, y0, width, height
+connector_lines = [False,False,True,True] #lower_left, upper_left, lower_right upper_right
+
+methods =['vlines','hlines',
+          'inset_axes','indicate_inset',
+          'set_xlim'
+          ]
+
+args =[
+          [
+          vlines,hlines
+          ,dict(bounds=inset_bounds,methods=['vlines','hlines','color_ax'],args=[[vlines,hlines,dict(color='magenta')]]),[dict(bounds=indicator_bounds,edgecolor='magenta',connector_lines=connector_lines)]
+          ,[0,20]
+          ]
+        ]
+
+
+fig=plotter(args,methods,ncols=1,fig_title='Inset Axes',show=1,keep_spines=True,save_path='./example_plots/inset_axes.png');
+```
+
+![image info](./example_plots/inset_axes.png)
+
+### Spacing & Padding
+
+To give space between subplots [```hspace``` and ```wspace``` can be used](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots_adjust.html).
+
+```
+args =[ 
+          [
+          [range(4)]
+          ]             
+        ]
+
+methods =['plot']
+
+plotter(4*args,methods,fig_title='Height Space',keep_spines=1,show=1,hspace=2,save_path='./example_plots/hspace.png');
+```
+
+![image info](./example_plots/hspace.png)
+
+To strech the subplots in y- and/or x-direction, use ```ypad``` and/or ```xpad```:
+
+```
+plotter(4*args,methods,fig_title='Y-Pad',keep_spines=1,show=1,ypad=12,save_path='./example_plots/ypad.png');
+```
+
+![image info](./example_plots/ypad.png)

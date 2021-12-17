@@ -1,6 +1,10 @@
 # Plotter
 Matplotlib based framework to create plots
 
+## Installation
+
+Download plotter.py and place it, where you want to import it from.
+
 ## How it works
 
 1) Create an arguments list with

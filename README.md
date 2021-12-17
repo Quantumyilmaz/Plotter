@@ -446,7 +446,7 @@ fig = plotter(args,attrs,second_plot=1,fig_title=f'Distributions and Autocorrela
 
 #### Thicker and centered axes
 
-Here we look at some axes related features that can be passed to ```plotter``` as keyword arguments:
+Here we look at some axes related features that can be passed in to ```plotter``` as keyword arguments:
 - ```axes_linewidth```: Set the linewith of axes. Default is ```1```.
 - ```keep_spines```: Set to ```True``` to keep the top and right sides of the figure's frame, which are removed by default.
 - ```centered_x_axis``` and ```centered_y_axis```: Set each to ```True``` to have centered x- and/or y-axes.

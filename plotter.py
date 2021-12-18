@@ -104,6 +104,8 @@ def plotter(arg_list, attribute_list,**kwargs):
     
     if kwargs.get('show',0):
         plt.show()
+
+    plt.close(fig)
     
     return fig
 
@@ -119,7 +121,7 @@ def make_labels(ax,x_or_y,prop):
             else:
                 raise NotImplementedError
     else:
-        if prop == 'positive':
+        if prop == 'absolute':
             # getattr(ax, f'set_{x_or_y}ticklabels')([*map(abs,labels)])
             getattr(ax, f'set_{x_or_y}ticks')(ticks=labels,labels=[*map(abs,np.round(labels,5))])
         else:

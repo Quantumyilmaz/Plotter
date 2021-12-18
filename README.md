@@ -544,3 +544,101 @@ plotter(4*args,methods,fig_title='Y-Pad',keep_spines=1,show=1,ypad=12,save_path=
 ```
 
 ![image info](./example_plots/ypad.png)
+
+### Title Related
+
+- ```suptitle_x``` , ```suptitle_y```: Adjust x and y positions of the figure title. Defaults are ```0.5``` and ```0.95```.
+- ```titlesize```: Adjusts the font size of the figure title. Defaults is ```25```.
+
+```
+plotter([[]],[],ncols=1,fig_title='Big Title',titlesize=180,suptitle_x=0.35,suptitle_y=0.4,show=1,save_path='./example_plots/big_title.png');
+```
+
+![image info](./example_plots/big_title.png)
+
+
+### Ticks Related
+
+#### Add
+
+We can <u>append</u> new ticks to existing ones or <u>add</u> a number to them by passing a dictionary ```dict(x={'add':object},y={'add':object})``` and calling ```ticks``` method. If ```object``` is a list, the numbers in the list will be appended. If it is a numpy array, the number(s) will be added to ticks. By using ```x``` and/or ```y``` as keys in the dictionary, the method will be applied to ```x```- and/or ```y```-ticks.
+
+```
+to_append = [8,9,10]
+to_add_number = np.array([2])
+xlim = [-1,11]
+
+args =[
+          [
+            [range(-4,4,1)],None
+            ,xlim,['Original',dict(fontsize=20)]
+          ]  
+          ,
+          [
+            [range(-4,4,1)],dict(x={'add':to_append},y={'add':to_append})
+            ,xlim,['Append',dict(fontsize=20)]
+          ]
+          ,
+          [
+            [range(-4,4,1)],dict(x={'add':to_add_number},y={'add':to_add_number})
+            ,xlim,['Add',dict(fontsize=20)]
+          ]
+        ]
+
+methods =['plot','ticks',
+          'set_xlim','set_title']
+
+plotter(args,methods,ncols=3,fig_title='Base example',suptitle_y=1.2,show=1,save_path='./example_plots/ticks_add.png');
+
+```
+
+![image info](./example_plots/ticks_add.png)
+
+#### Absolute Value
+
+We can take the <u>absolute value</u> of our ticks by passing a dictionary ```dict(x='absolute',y='absolute')``` and calling ```ticks``` method. Here the difference comparared to the ['Add' case](#add) is that we do not have a nested dictionary or list in our dictionary but the string ```absolute```. By using ```x``` and/or ```y``` as keys in the dictionary, the method will be applied to ```x```- and/or ```y```-ticks.
+
+```
+args =[    
+          [
+          [range(-4,4,1)],None,['Original',dict(fontsize=20)]
+          ]  
+          ,
+          [
+          [range(-4,4,1)],dict(x='absolute',y='absolute'),['Absolute Valued Ticks',dict(fontsize=20)]
+          ]
+        ]
+
+methods =['plot','ticks','set_title']
+
+plotter(args,methods,ncols=2,fig_title='Ticks/Absolute',show=1,save_path='./example_plots/ticks_absolute_val.png');
+```
+
+![image info](./example_plots/ticks_absolute_val.png)
+
+#### Time Formatting
+
+Time format of xticks can be reformatted by passing a [format string](https://docs.python.org/3/library/datetime.html#datetime.date.strftime) and calling ```time_formatx``` method. To change format of yticks call ```time_formaty``` method.
+
+```
+import pandas as pd
+
+today = pd.to_datetime("today").strftime('%Y/%m/%d')
+date_range = pd.Series(range(-4,4,1),index=pd.date_range(today, periods=8))
+
+args =[    
+          [
+          [date_range.index,date_range.values],None,['Original',dict(fontsize=20)]
+          ]
+          ,
+          [
+          [date_range.index,date_range.values],['%Y/%m/%d'],['Format Changed',dict(fontsize=20)]
+          ]
+        ]
+
+methods =['plot','time_formatx','set_title']
+
+plotter(args,methods,ncols=2,fig_title='Ticks/Time Formatting',show=1,save_path='./example_plots/ticks_timeformat.png');
+```
+
+![image info](./example_plots/ticks_timeformat.png)

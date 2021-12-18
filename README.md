@@ -545,7 +545,7 @@ plotter(4*args,methods,fig_title='Y-Pad',keep_spines=1,show=1,ypad=12,save_path=
 
 ![image info](./example_plots/ypad.png)
 
-### Title Related
+### Adjustments to Figure Title
 
 - ```suptitle_x``` , ```suptitle_y```: Adjust x and y positions of the figure title. Defaults are ```0.5``` and ```0.95```.
 - ```titlesize```: Adjusts the font size of the figure title. Defaults is ```25```.

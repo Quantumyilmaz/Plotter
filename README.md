@@ -15,6 +15,11 @@ Download plotter.py and place it, where you want to import it from.
 These methods will iterate over each subplot's arguments. Here you can call any method available for [matplotlib Axes class](https://matplotlib.org/stable/api/axes_api.html).
 
 3) Pass in your arguments and methods list to ```plotter```. Calling ```plotter``` returns a [figure object](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure), so you can further customize your plot using it.
+
+## Examples
+
+[The steps described above](## How it works) are demonstrated in the following examples.
+
 ### Base example
 
 - Import

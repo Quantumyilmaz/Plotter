@@ -12,7 +12,7 @@ Download plotter.py and place it, where you want to import it from.
        * A list with arguments and keyword arguments to be passed to the method
 
 2) Create a methods list with methods to be called for each subplot.
-These methods will iterate over each subplot's arguments.
+These methods will iterate over each subplot's arguments. Here you can call any method available for [matplotlib Axes class](https://matplotlib.org/stable/api/axes_api.html).
 
 ### Base example
 
@@ -34,7 +34,7 @@ from plotter import plotter
         ]
 ```
 
-- Create a list of matplotlib method you want to call. Here you can call any method available for [matplotlib Axes class](https://matplotlib.org/stable/api/axes_api.html):
+- Create a list of matplotlib method you want to call:
 
 ```
   methods =['plot']

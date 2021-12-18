@@ -18,7 +18,7 @@ These methods will iterate over each subplot's arguments. Here you can call any 
 
 ## Examples
 
-[The steps described above](## How it works) are demonstrated in the following examples.
+[The steps described above](#how-it-works) are demonstrated in the following examples.
 
 ### Base example
 

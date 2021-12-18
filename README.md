@@ -42,9 +42,9 @@ from plotter import plotter
 
 - Call plotter:
     * ```ncols``` defines the number of columns in your plot, i.e. number of subplots per row. By default it is ```2```.
-    * ```show=1``` calls ```matplotlib.pyplot.show()``` a.k.a. ```plt.show()```
+    * ```show=1``` calls ```matplotlib.pyplot.show()``` a.k.a. ```plt.show()```.
     * if ```save_path``` is given as keyword argument, the plot will be saved to the provided path.
-    * ```fig_title``` is the title of the plot
+    * ```fig_title``` is the title of the plot.
 
 ```
 plotter(args,methods,ncols=1,fig_title='Base example',show=1,save_path='./example_plots/base_example.png');

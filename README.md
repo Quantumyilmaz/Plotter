@@ -143,6 +143,8 @@ plotter(args,methods,fig_title='Intermediate example',show=1,save_path='./exampl
 
 ![image info](./example_plots/intermediate_example_lineplot&hist.png)
 
+#### Tables
+
 Tables are often useful when plotting histograms. Let's also add some axis labels:
 
 ```

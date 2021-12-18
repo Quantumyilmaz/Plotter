@@ -76,7 +76,7 @@ def plotter(arg_list, attribute_list,**kwargs):
                 else:
                     ax_helper(axis,attribute,arg,lines)
 
-    get_axes()  
+    get_axes()
     fig_title = kwargs.get('fig_title','')
     fig.suptitle(fig_title, x=kwargs.get('suptitle_x',0.5),y=kwargs.get('suptitle_y',0.95),fontsize=kwargs.get('titlesize',25))
     

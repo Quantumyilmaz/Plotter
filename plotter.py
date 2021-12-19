@@ -50,9 +50,17 @@ def plotter(arg_list, attribute_list,**kwargs):
                     axis.set_label(f"{row_no}{col_no}")
                     
                 axes_linewidth = kwargs.get('axes_linewidth')
-                if axes_linewidth:
+                if isinstance(axes_linewidth,(int,float)):
                     for spine in ['top','bottom','left','right']:
                         axis.spines[spine].set_linewidth(axes_linewidth)
+                        if hasattr(axis,'twin'):
+                            axis.twin.spines[spine].set_linewidth(width)
+                elif isinstance(axes_linewidth,dict):
+                    for spine,width in axes_linewidth.items():
+                        axis.spines[spine].set_linewidth(width)
+                        if hasattr(axis,'twin'):
+                            axis.twin.spines[spine].set_linewidth(width)
+
                 if kwargs.get('centered_y_axis'):
                     axis.spines['left'].set_position('center')
                 if kwargs.get('centered_x_axis'):

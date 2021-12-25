@@ -1,3 +1,8 @@
+# Author: Ahmet Ege Yilmaz
+# Year: 2020
+# Title: Matplotlib based framework to create plots
+# Documentation: https://github.com/Quantumyilmaz/Plotter
+
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 import matplotlib.table as tbl
